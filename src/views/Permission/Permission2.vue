@@ -1,10 +1,10 @@
 <template>
-    <div>我是dashboard</div>
+    <div>我是要权限的2</div>
 </template>
 
 <script>
 export default {
-  name: 'dashboard'
+  name: 'Permission'
 }
 </script>
 

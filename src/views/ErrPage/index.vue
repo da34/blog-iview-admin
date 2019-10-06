@@ -1,11 +1,11 @@
 <template>
-    $END$
+    <div>我是404</div>
 </template>
 
 <script>
-  export default {
-    name: 'login'
-  }
+export default {
+  name: 'notFound'
+}
 </script>
 
 <style scoped>
