@@ -121,14 +121,22 @@ const asyncRouterMap = [
   {
     path: '/setting',
     component: Layout,
+    meta: { role: ['admin', 'super_admin'], title: '设置', icon: 'setting' },
     children: [
       {
-        path: '',
-        component: () => import('@/views/Permission/Permission'),
-        name: 'setting',
+        path: 'personage',
+        component: () => import('@/views/Setting/personage'),
+        name: 'personage',
         // 页面需要的权限
-        meta: { role: ['admin', 'super_admin'], title: '网站设置', icon: 'setting' }
-      }
+        meta: { role: ['admin', 'super_admin'], title: '个人设置', icon: 'setting' }
+      },
+      {
+        path: 'site',
+        component: () => import('@/views/Setting/site'),
+        name: 'site',
+        // 页面需要的权限
+        meta: { role: ['super_admin'], title: '网站设置', icon: 'setting' }
+      },
     ]
   },
   {
@@ -142,13 +150,13 @@ const asyncRouterMap = [
         path: 'index1',
         component: () => import('@/views/Permission/Permission'),
         name: 'test1',
-        meta: { role: ['admin', 'super_admin'], title: '测试1', noCache: true }
+        meta: { role: ['admin', 'super_admin'], title: '测试1', noCache: true, icon: 'show' }
       },
       {
         path: 'index2',
         component: () => import('@/views/Permission/Permission2'),
         name: 'test2',
-        meta: { role: ['super_admin'], title: '测试2'}
+        meta: { role: ['super_admin'], title: '测试2', icon: 'show' }
       }
     ]
   },

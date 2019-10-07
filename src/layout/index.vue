@@ -34,5 +34,4 @@ export default {
         position relative
         height 100vh
         border-radius 4px
-        overflow hidden
 </style>

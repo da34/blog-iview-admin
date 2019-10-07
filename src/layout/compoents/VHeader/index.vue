@@ -1,5 +1,5 @@
 <template>
-    <Header class="header-wrapper" style="margin-left: 200px;">
+    <Header class="header-wrapper">
         <VBreadcrumd />
         <header-user />
     </Header>
@@ -23,4 +23,9 @@ export default {
     background #fff
     box-shadow 0 0 3px 2px rgba(0,0,0,.1)
     display flex
+    margin-left 200px
+@media (max-width: 768px)
+    .header-wrapper
+        padding 0 20px
+        margin-left 0
 </style>

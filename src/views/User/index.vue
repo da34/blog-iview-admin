@@ -6,10 +6,10 @@
             <Button style="margin-right: 50px;" type="info" @click="reset">Reset</Button>
         </div>
         <div class="action">
-            <Button type="primary" icon="md-add" @click="show = true">Add New Link</Button>
+            <Button type="primary" icon="md-add" @click="show = true" disabled>Add New User</Button>
         </div>
         <div style="position: relative;">
-            <Table :columns="columns" :data="linkList" class="list">
+            <Table :columns="columns" :data="userList" class="list">
                 <template slot-scope="{ row }" slot="avatar">
                     <Button v-if="row.avatar" icon="md-eye" type="primary" size="small" @click="preview(row.avatar)">预览</Button>
                 </template>
@@ -19,8 +19,11 @@
                         <span slot="close">无效</span>
                     </ISwitch>
                 </template>
+                <template slot-scope="{ row }" slot="comments">
+                    <sapn>{{ row.comments.length }}</sapn>
+                </template>
                 <template slot-scope="{ row }" slot="action">
-                    <Button type="info" size="small" @click="edit(row)">编辑</Button>
+                    <Button type="info" size="small" @click="edit(row)" disabled>编辑</Button>
                 </template>
             </Table>
             <Spin size="large" fix v-if="loading" />
@@ -36,65 +39,16 @@
                 <Button type="primary" style="margin-right: 5px" @click="visible = !visible">关闭</Button>
             </template>
         </Modal>
-        <Modal :title="modalTitle" v-model="show" :zIndex="1600" @on-ok="handleOk('link')">
-            <Form ref="link" :model="linkData" label-position="top" :rules="ruleLink">
-                <FormItem label="Name" prop="name">
-                    <Input v-model="linkData.name" />
-                </FormItem>
-                <FormItem label="Avatar">
-                    <Input v-model="linkData.avatar" />
-                </FormItem>
-                <FormItem label="OutLine">
-                    <Input v-model="linkData.outline" />
-                </FormItem>
-                <FormItem label="URL" prop="URL">
-                    <Input v-model="linkData.URL" />
-                </FormItem>
-            </Form>
-            <span style="padding-right: 10px;">Status</span>
-            <ISwitch size="large" :value="linkData.status" :true-value="0" :false-value="1" @on-change="status => linkData.status = status">
-                <span slot="open">正常</span>
-                <span slot="close">无效</span>
-            </ISwitch>
-        </Modal>
     </Card>
 </template>
 <script>
-import { getList, update, search, create } from '@/api/link'
-
-const defaultLink = {
-  name: '',
-  avatar: '',
-  URL: '',
-  outline: '',
-  status: 0
-}
+import { getUserList, update } from '@/api/user'
 
 export default {
   name: 'Link',
   data () {
-    const validatorName = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please enter your Name'))
-      }
-      callback()
-    }
-    const validatorURL = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please enter your URL'))
-      }
-      callback()
-    }
     return {
-      formTop: {
-        input1: '',
-        input2: '',
-        input3: ''
-      },
       visible: false,
-      show: false,
-      modalTitle: 'Create Link',
-      linkData: Object.assign({}, defaultLink),
       columns: [
         {
           title: 'UserName',
@@ -110,8 +64,16 @@ export default {
           key: 'mail'
         },
         {
+          title: 'CreatedAt',
+          key: 'createdAt'
+        },
+        {
           title: 'Status',
           slot: 'status'
+        },
+        {
+          title: 'Comments',
+          slot: 'comments'
         },
         {
           title: 'Action',
@@ -120,47 +82,34 @@ export default {
           align: 'center'
         }
       ],
-      linkList: [],
+      userList: [],
       total: 0,
       query: {
         limit: 10,
         page: 1
       },
       loading: false,
-      keyName: '',
       avatar: '',
-      type: 0,
-      ruleLink: {
-        name: [
-          { validator: validatorName, trigger: 'blur' }
-        ],
-        URL: [
-          { validator: validatorURL, trigger: 'blur' }
-        ]
-      }
+      keyName: ''
     }
   },
   watch: {
     'query.page' () {
-      this.getLinkList()
+      this.getUserList()
     }
   },
   created () {
-    this.getLinkList()
+    this.getUserList()
   },
   methods: {
-    async getLinkList () {
+    async getUserList () {
       this.loading = true
-      const { count, rows } = await getList(this.query)
+      let query = Object.assign({}, this.query)
+      if (this.keyName) query = Object.assign({}, this.query, { username: this.keyName })
+      const { count, rows } = await getUserList(query)
       this.total = count
-      this.linkList = rows
+      this.userList = rows
       this.loading = false
-    },
-    edit (row) {
-      this.linkData = Object.assign({}, row)
-      this.show = true
-      this.type = 1
-      this.modalTitle = 'Edit Link'
     },
     changePage (i) {
       this.query.page = i
@@ -173,34 +122,19 @@ export default {
       this.loading = true
       row.status = row.status ? 0 : 1
       await update(row)
-      this.getLinkList()
+      await this.getUserList()
       this.loading = false
     },
     async search () {
       if (!this.keyName) this.$Message.warning('搜索条件不能为空')
-      const result = await search({ name: this.keyName })
-      this.linkList = result.data
+      const query = Object.assign({}, this.query, { username: this.keyName })
+      const result = await getUserList(query)
+      this.userList = result.rows
+      this.total = result.count
     },
     reset () {
       this.keyName = ''
-      this.getLinkList()
-    },
-    handleOk (name) {
-      this.$refs[name].validate(async valid => {
-        if (valid) {
-          if (!this.type) {
-            await create(this.linkData)
-            this.$Message.success('新增成功!')
-          } else {
-            await update(this.linkData)
-            this.$Message.success('修改成功!')
-          }
-          this.linkData = Object.assign({}, defaultLink)
-          this.getLinkList()
-        } else {
-          this.$Message.error('Fail!')
-        }
-      })
+      this.getUserList()
     }
   }
 }

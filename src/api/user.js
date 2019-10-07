@@ -14,8 +14,24 @@ const getInfo = () => {
     method: 'get'
   })
 }
+const getUserList = query => {
+  return request({
+    url: 'auth/list',
+    method: 'get',
+    params: query
+  })
+}
+const update = data => {
+  return request({
+    url: 'auth/update',
+    method: 'put',
+    data
+  })
+}
 
 export {
   login,
-  getInfo
+  getInfo,
+  getUserList,
+  update
 }

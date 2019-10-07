@@ -1,7 +1,7 @@
 <template>
     <Card>
         <div class="condition">
-            <Input  v-model="keyName" suffix="ios-search" placeholder="Search by name..." style="width: 200px;margin-right: 50px;" />
+            <Input  v-model="keyName" suffix="ios-search" placeholder="Search by name..." class="search"/>
             <Button style="margin-right: 10px;" type="primary" @click="search">Search</Button>
             <Button style="margin-right: 50px;" type="info" @click="reset">Reset</Button>
         </div>
@@ -86,11 +86,6 @@ export default {
       callback()
     }
     return {
-      formTop: {
-        input1: '',
-        input2: '',
-        input3: ''
-      },
       visible: false,
       show: false,
       modalTitle: 'Create Link',
@@ -99,22 +94,27 @@ export default {
         {
           title: 'Name',
           key: 'name',
+          minWidth: 100,
           tooltip: true
         },
         {
           title: 'Avatar',
+          minWidth: 100,
           slot: 'avatar'
         },
         {
           title: 'Outline',
+          minWidth: 100,
           key: 'outline'
         },
         {
           title: 'URL',
+          minWidth: 100,
           key: 'URL'
         },
         {
           title: 'Status',
+          minWidth: 100,
           slot: 'status'
         },
         {
@@ -213,8 +213,14 @@ export default {
     .condition, .action
         margin-bottom 20px
         display flex
-    .list
-        >>> .ivu-table-row
-            overflow hidden
-            padding 50px 0
+        .search
+            flex 0 0 200px
+            margin-right 50px
+@media (max-width: 768px)
+    .condition
+        flex-wrap wrap
+        >>> Button
+            margin-top 10px
+        .search
+            flex 0 0 auto
 </style>
