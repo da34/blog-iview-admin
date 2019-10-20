@@ -1,7 +1,10 @@
 import axios from 'axios'
-import { Message } from 'iview'
+import { Message } from 'view-design'
+import store from '@/store'
+import { getToken } from './cookie'
+
 const instance = axios.create({
-  baseURL: '/api/v1',
+  baseURL: 'http://127.0.0.1:7001/api/v1',
   timeout: 5000
 })
 
@@ -9,9 +12,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
   config => {
     // 请求之前判断有无token
-    // if (store.getters.token) {
-    //   config.headers['X-Token'] = getToken()
-    // }
+    const token = getToken() || store.getters.token
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
     return config
   }, error => {
     return Promise.reject(error)

@@ -1,6 +1,6 @@
 import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/cookie'
-import { Message } from 'iview'
+import { Message } from 'view-design'
 import { resetRoutes } from '@/router'
 
 const state = () => ({
@@ -29,7 +29,9 @@ const actions = {
   async login ({ commit }, userInfo) {
     await new Promise((resolve, reject) => {
       login(userInfo).then(res => {
-        const { token, role } = res
+        // console.log(res)
+        const { token, role } = res.data
+        // console.log(token, role)
         if (role === 'normal') {
           Message.warning('权限不足，无法进入!')
           /* eslint-disable */
@@ -56,7 +58,7 @@ const actions = {
         // console.log(data)
         commit('SET_AVATAR', data.avatar)
         commit('SET_USERNAME', data.username)
-        commit('SET_ROLES', data.roles)
+        commit('SET_ROLES', data.role)
         resolve()
       }).catch(error => {
         reject(error)

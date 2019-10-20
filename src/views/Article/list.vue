@@ -12,7 +12,7 @@
         <div style="position: relative;">
             <Table :columns="columns" :data="articleList" class="list">
                 <template slot-scope="{ row }" slot="headerCover">
-                    <Button v-if="row.image_url" icon="md-eye" type="primary" size="small" @click="preview(row.image_url)">预览</Button>
+                    <Button v-if="row.imageUrl" icon="md-eye" type="primary" size="small" @click="preview(row.imageUrl)">预览</Button>
                 </template>
                 <template slot-scope="{ row }" slot="status">
                     <ISwitch size="large" :value="row.status === 0" @on-change="handleStatus(row)">
@@ -73,8 +73,8 @@ export default {
           slot: 'status'
         },
         {
-          title: 'Password',
-          key: 'password'
+          title: 'ViewPwd',
+          key: 'viewPwd'
         },
         {
           title: 'Action',
@@ -104,9 +104,10 @@ export default {
   methods: {
     async getArticleList () {
       this.loading = true
-      const { count, rows } = await fetchList(this.query)
-      this.total = count
-      this.articleList = rows
+      const { data } = await fetchList(this.query)
+      // console.log(data)
+      this.total = data.count
+      this.articleList = data.rows
       this.loading = false
     },
     show (index) {

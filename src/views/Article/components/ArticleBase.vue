@@ -11,8 +11,8 @@
                 <Markdown :text="postForm.content" style="margin-top: 20px;z-index: 100" ref="md" />
             </div>
             <div style="text-align: center">
-                <Button type="primary" style="margin-right: 10px;" @click="publish(0)">发布</Button>
-                <Button @click="draft">草稿</Button>
+                <Button @click="draft" style="margin-right: 10px;">保存草稿</Button>
+                <Button type="primary" @click="publish(0)">发布文章</Button>
             </div>
         </Card>
         <Card class="option">
@@ -24,23 +24,20 @@
             </div>
             <div class="category">
                 <p>分类</p>
-                <Input v-model="postForm.category.name" />
-<!--                <RadioGroup v-model="postForm.category.name" type="button">-->
-<!--                    <Radio  v-for="category in categoryList" :key="category.name" :label="category.name" style="margin-right: 10px;" />-->
-<!--                    <Button icon="ios-add" type="dashed" size="small" @click="handleAdd"></Button>-->
-<!--                </RadioGroup>-->
+                <RadioGroup v-model="postForm.categoryId" type="button">
+                    <Radio  v-for="category in categoryList" :key="category.id" :label="category.id" style="margin: 10px 10px 0 0;" >{{category.name}}</Radio>
+                </RadioGroup>
             </div>
             <div class="tag">
                 <p>标签</p>
-<!--                <Tag color="#F4B9C6"-->
-<!--                     @on-change="handleTag"-->
-<!--                     :checkable="true"-->
-<!--                     :checked="postForm.tags.some(v => v.name === tag.name)"-->
-<!--                     v-for="tag in tagList"-->
-<!--                     :key="tag.name"-->
-<!--                     :name="tag.name"-->
-<!--                >{{tag.name}}</Tag>-->
-                <Input v-model="postForm.tag.name" />
+                <Tag color="#FFA2D3"
+                     @on-change="handleTag"
+                     :checkable="true"
+                     :checked="postForm.tags.some(v => v.id === tag.id)"
+                     v-for="tag in tagList"
+                     :key="tag.name"
+                     :name="tag.id"
+                >{{tag.name}}</Tag>
             </div>
             <div class="headImg">
                 <p>文章头图</p>
@@ -53,31 +50,54 @@
                         :before-upload="handleUpload"
                         :show-upload-list="false"
                         action="//jsonplaceholder.typicode.com/posts/">
-                    <div style="padding: 20px 0" v-if="!postForm.image_url">
+                    <div style="padding: 20px 0" v-if="!postForm.imageUrl">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>Click or drag files here to upload</p>
                     </div>
                     <div v-else class="preview">
-                        <img :src="postForm.image_url">
+                        <img :src="postForm.imageUrl">
                         <div class="upload-list-cover">
                             <Icon type="ios-eye-outline" @click.stop="visible = true"></Icon>
-                            <Icon type="ios-trash-outline" @click.stop="postForm.image_url = ''"></Icon>
+                            <Icon type="ios-trash-outline" @click.stop="postForm.imageUrl = ''"></Icon>
                         </div>
                     </div>
                 </Upload>
                 <Modal title="View Image" v-model="visible" :zIndex="1600">
-                    <img :src="postForm.image_url" v-if="visible" style="width: 100%">
+                    <img :src="postForm.imageUrl" v-if="visible" style="width: 100%">
                     <template v-slot:footer>
                         <Button type="primary" @click="visible = false">关闭</Button>
                     </template>
                 </Modal>
             </div>
-            <div class="password">
-                <p>文章访问密码</p>
-                <Input disabled style="margin-top: 10px;" icon="ios-eye-outline" :type="iptType" @on-click="isPwd = !isPwd" v-model="postForm.password" placeholder="输入..." />
+            <div class="rankOpt">
+                <Collapse simple>
+                    <Panel>
+                        <span style="font-weight: 700">高级选项</span>
+                        <template v-slot:content>
+                            <div class="password">
+                                <p>文章访问密码：</p>
+                                <Input  style="margin-top: 10px;"  type="password" password  @on-click="isPwd = !isPwd" v-model="postForm.viewPwd" placeholder="输入..." />
+                            </div>
+                            <div class="top">
+                                <span>置顶：</span>
+                                <ISwitch size="large" v-model="postForm.putTop" :true-value="0" :false-value="1">
+                                    <span slot="open">ON</span>
+                                    <span slot="close">OFF</span>
+                                </ISwitch>
+                            </div>
+                            <div class="comment">
+                                <span>评论：</span>
+                                <ISwitch size="large"  v-model="postForm.commentDisabled" :true-value="0" :false-value="1">
+                                    <span slot="open">ON</span>
+                                    <span slot="close">OFF</span>
+                                </ISwitch>
+                            </div>
+                        </template>
+                    </Panel>
+                </Collapse>
             </div>
             <Divider v-if="type !== 'create'" />
-            <p v-if="type !== 'create' && postForm.updateAt === 'Invaliddate'" style="font-size: 14px; color: #666;">
+            <p v-if="type !== 'create'" style="font-size: 14px; color: #666;">
                 最后更新于
                 <Time :time="postForm.updateAt" />
             </p>
@@ -87,21 +107,22 @@
 <script>
 import Markdown from '@/components/Markdown/index'
 import { fetchList } from '@/api/category'
+import { fetchTagList } from '../../../api/tag'
 import { uploadFile } from '@/utils'
 import { createArticle, updateArticle } from '@/api/article'
 
 const defaultForm = {
   title: '', // 文章题目
   content: '', // 文章内容
-  content_short: '', // 文章摘要
-  image_url: '', // 文章头图
+  contentShort: '', // 文章摘要
+  imageUrl: '', // 文章头图
   createdAt: '', // 前台展示时间
-  comment_disabled: 0, // 是否开放评论 0 - 开放, 1 - 禁用
-  password: '', // 文章访问密码
-  top: 1, // 是否置顶 0 - 置顶
+  commentDisabled: 0, // 是否开放评论 0 - 开放, 1 - 禁用
+  viewPwd: '', // 文章访问密码
+  putTop: 1, // 是否置顶 0 - 置顶
   status: 0, // 状态 0 - 发布, 1 - 草稿
-  tag: { name: '' }, // 标签
-  category: { name: '' } // 分类
+  tags: [], // 标签
+  categoryId: 0 // 分类
 }
 export default {
   name: 'ArticleBase',
@@ -126,6 +147,7 @@ export default {
     return {
       createdAt: '',
       categoryList: [],
+      tagList: [],
       visible: false,
       uploadList: [],
       postForm: {},
@@ -136,8 +158,6 @@ export default {
     this.fetchOption()
     if (this.type !== 'create') {
       this.postForm = Object.assign({}, this.article)
-      this.postForm.category = this.postForm.category ? this.postForm.category : { name: '' }
-      this.postForm.tag = this.postForm.tag ? this.postForm.tag : { name: '' }
       this.createdAt = this.postForm.createdAt
       return
     }
@@ -145,16 +165,15 @@ export default {
   },
   computed: {
     disabled () {
-      return !!this.postForm.image_url
-    },
-    iptType () {
-      return this.isPwd ? 'text' : 'password'
+      return !!this.postForm.imageUrl
     }
   },
   methods: {
     async fetchOption () {
       const category = await fetchList()
+      const tags = await fetchTagList()
       this.categoryList = category.data
+      this.tagList = tags.data
     },
     async publish (status = 0) {
       this.postForm.content = this.$refs.md.content
@@ -163,6 +182,15 @@ export default {
         this.$Message.error('标题和内容为必填项!')
       }
       if (this.type !== 'create') {
+        const tempArr = []
+        this.postForm.tags.map(v => {
+          if (v.id) tempArr.push(v.id)
+          else tempArr.push(v)
+        })
+        this.postForm.tags = tempArr.slice()
+        // console.log(this.postForm.tags)
+        // console.log(tempArr)
+        // return
         await updateArticle(this.postForm)
       } else {
         await createArticle(this.postForm)
@@ -185,13 +213,19 @@ export default {
     // 上传图片
     async handleUpload (file) {
       const { url } = await uploadFile(file)
-      this.postForm.image_url = url
+      this.postForm.imageUrl = url
       return false
     },
     DateOk () {
       this.postForm.createdAt = new Date(this.createdAt).getTime()
     },
-    handleAdd () {
+    handleTag (checked, id) {
+      console.log('我执行了')
+      if (checked) this.postForm.tags.push(id)
+      else {
+        const index = this.postForm.tags.indexOf(id)
+        this.postForm.tags.splice(index, 1)
+      }
     }
   }
 }
@@ -199,11 +233,12 @@ export default {
 <style scoped lang="stylus">
 .article-wrapper
     display flex
+    width 100%
     .option
-        flex 0 0 300px
+        width 300px
         > div
             margin-top 10px
-        .headImg, .tag, .category, .password
+        .headImg, .tag, .category
             margin 10px 0
             .preview
                 position relative
@@ -224,9 +259,16 @@ export default {
                     display flex
                 img
                     width 100%
+        .rankOpt
+            div
+                margin-bottom 10px
     .article
-        flex 1
+        flex-grow 1
         margin-right 10px
     >>> .ivu-checkbox-inner
         margin-right 3px
+    >>> .ivu-collapse
+        border 0
+    >>> .ivu-collapse-header
+        padding 0
 </style>

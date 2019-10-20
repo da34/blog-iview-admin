@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getList (params) {
   return request({
-    url: '/link/list',
+    url: '/links',
     method: 'get',
     params
   })
@@ -10,21 +10,15 @@ export function getList (params) {
 
 export function update (data) {
   return request({
-    url: '/link/update',
+    url: `/links/${data.id}`,
     method: 'put',
     data
   })
 }
-export function search (data) {
-  return request({
-    url: '/link/search',
-    method: 'get',
-    params: data
-  })
-}
+
 export function create (data) {
   return request({
-    url: '/link/create',
+    url: '/links',
     method: 'post',
     data
   })

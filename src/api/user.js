@@ -3,27 +3,29 @@ import request from '@/utils/request'
 // 登录
 const login = data => {
   return request({
-    url: 'auth/login',
+    url: '/login',
     method: 'post',
     data
   })
 }
+
 const getInfo = () => {
   return request({
-    url: 'auth/user/info',
+    url: '/userInfo',
     method: 'get'
   })
 }
+
 const getUserList = query => {
   return request({
-    url: 'auth/list',
+    url: '/users',
     method: 'get',
     params: query
   })
 }
 const update = data => {
   return request({
-    url: 'auth/update',
+    url: `/users/${data.id}`,
     method: 'put',
     data
   })

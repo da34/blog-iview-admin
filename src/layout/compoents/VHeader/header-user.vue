@@ -1,16 +1,19 @@
 <template>
     <div class="user">
-        <Dropdown @on-click="click">
-            <Tooltip :content="'你好'+username" placement="left">
-                <Avatar :src="avatar" size="large"></Avatar>
-            </Tooltip>
-            <DropdownMenu slot="list" style="text-align: center;">
-                <DropdownItem name='logOut'>
-                    <Icon type="md-power" />
-                    注销
-                </DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
+        <ul class="list">
+            <li class="item">
+                <Dropdown @on-click="click">
+                    <Avatar :src="avatar" size="large" />
+                    <span style="padding-left: 10px;">{{username}}</span>
+                    <DropdownMenu slot="list" style="text-align: center;">
+                        <DropdownItem name='logOut'>
+                            <Icon type="md-power" />
+                            退出登录
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -41,6 +44,14 @@ export default {
 
 <style scoped lang="stylus">
 .user
-    width 50px
     margin-left auto
+    .list
+        display flex
+        .item
+            height 100%
+            cursor pointer
+            transition: all .2s ease-in-out
+            padding 0 10px
+            &:hover
+                background #F5F7F9
 </style>

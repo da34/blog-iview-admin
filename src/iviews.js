@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import 'iview/dist/styles/iview.css'
+// import style
+import 'view-design/dist/styles/iview.css'
 import {
   Button,
   Layout,
@@ -33,8 +34,14 @@ import {
   Table,
   Page,
   Switch,
-  Time
-} from 'iview'
+  Time,
+  CellGroup,
+  Cell,
+  Row,
+  Col,
+  Collapse,
+  Panel
+} from 'view-design'
 
 Vue.component('Button', Button)
 Vue.component('Layout', Layout)
@@ -68,6 +75,12 @@ Vue.component('Table', Table)
 Vue.component('Page', Page)
 Vue.component('ISwitch', Switch)
 Vue.component('Time', Time)
+Vue.component('CellGroup', CellGroup)
+Vue.component('Cell', Cell)
+Vue.component('Row', Row)
+Vue.component('Col', Col)
+Vue.component('Collapse', Collapse)
+Vue.component('Panel', Panel)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal

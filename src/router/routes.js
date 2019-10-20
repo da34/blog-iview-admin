@@ -11,7 +11,7 @@ import Refresh from '@/components/Refresh/index'
    role: ['admin','editor']     可以访问的角色
    title: 'title'               侧边栏显示的名称
    icon: 'name'                 使用的icon名称
-   noCache: true                是否缓存
+   noCache: true                是否使用keep_alive缓存
  }
  **/
 
@@ -61,7 +61,7 @@ const asyncRouterMap = [
         path: 'create',
         component: () => import('@/views/Article/create'),
         name: 'createArticle',
-        meta: { role: ['super_admin'], title: '新建文章', noCache: true }
+        meta: { role: ['super_admin'], title: '新建文章' }
       },
       {
         path: 'edit',
@@ -74,7 +74,20 @@ const asyncRouterMap = [
         path: 'show',
         component: () => import('@/views/Article/list'),
         name: 'article',
-        meta: { role: ['super_admin'], title: '查看文章' }
+        meta: { role: ['admin', 'super_admin'], title: '查看文章' }
+      }
+    ]
+  },
+  {
+    path: '/articleMeta',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/TagCategory/index'),
+        name: 'tagCategory',
+        // 页面需要的权限
+        meta: { role: ['super_admin'], title: '分类-标签', icon: 'comment', noCache: true }
       }
     ]
   },

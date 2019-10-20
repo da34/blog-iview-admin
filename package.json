@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
-    "iview": "^3.5.1",
+    "view-design": "^4.0.0",
     "js-cookie": "^2.2.1",
     "mavon-editor": "^2.7.6",
     "qiniu-js": "^2.5.4",

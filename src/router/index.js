@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { getToken } from '@/utils/cookie'
 import store from '@/store/index'
-import { Message, LoadingBar } from 'iview'
+import { Message, LoadingBar } from 'view-design'
 import { constantRoutes } from './routes'
 
 Vue.use(Router)

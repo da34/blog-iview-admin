@@ -155,9 +155,9 @@ export default {
   methods: {
     async getLinkList () {
       this.loading = true
-      const { count, rows } = await getList(this.query)
-      this.total = count
-      this.linkList = rows
+      const { data } = await getList(this.query)
+      this.total = data.count
+      this.linkList = data.rows
       this.loading = false
     },
     edit (row) {
@@ -181,9 +181,14 @@ export default {
       this.loading = false
     },
     async search () {
-      if (!this.keyName) this.$Message.warning('搜索条件不能为空')
-      const result = await search({ name: this.keyName })
-      this.linkList = result.data
+      if (!this.keyName) {
+        this.$Message.warning('搜索条件不能为空')
+        return
+      }
+      const query = Object.assign({}, this.query, { name: this.keyName })
+      const { data } = await getList(query)
+      this.linkList = data.rows
+      this.total = data.count
     },
     reset () {
       this.keyName = ''

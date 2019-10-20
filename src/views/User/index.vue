@@ -106,9 +106,9 @@ export default {
       this.loading = true
       let query = Object.assign({}, this.query)
       if (this.keyName) query = Object.assign({}, this.query, { username: this.keyName })
-      const { count, rows } = await getUserList(query)
-      this.total = count
-      this.userList = rows
+      const { data } = await getUserList(query)
+      this.total = data.count
+      this.userList = data.rows
       this.loading = false
     },
     changePage (i) {
@@ -126,11 +126,14 @@ export default {
       this.loading = false
     },
     async search () {
-      if (!this.keyName) this.$Message.warning('搜索条件不能为空')
+      if (!this.keyName) {
+        this.$Message.warning('搜索条件不能为空')
+        return;
+      }
       const query = Object.assign({}, this.query, { username: this.keyName })
-      const result = await getUserList(query)
-      this.userList = result.rows
-      this.total = result.count
+      const { data } = await getUserList(query)
+      this.userList = data.rows
+      this.total = data.count
     },
     reset () {
       this.keyName = ''

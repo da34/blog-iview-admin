@@ -5,8 +5,8 @@
             <div style="text-align:center">
 <!--                <img src="../assets/2ecd3b0452aa197097d5131afacab7b8.png" width="50">-->
                 <Form ref="formInline" :model="formInline" :rules="ruleInline">
-                    <FormItem prop="username">
-                        <Input type="text" v-model="formInline.username" placeholder="账号">
+                    <FormItem prop="loginname">
+                        <Input type="text" v-model="formInline.loginname" placeholder="账号">
                             <Icon type="ios-person-outline" slot="prepend" />
                         </Input>
                     </FormItem>
@@ -26,16 +26,17 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+
 export default {
   data () {
     return {
       formInline: {
-        username: '',
+        loginname: '',
         password: ''
       },
       spinShow: false,
       ruleInline: {
-        username: [
+        loginname: [
           { required: true, message: '请输入账号', trigger: 'blur' }
         ],
         password: [
@@ -44,6 +45,9 @@ export default {
         ]
       }
     }
+  },
+  created () {
+    console.log(window.cookie)
   },
   methods: {
     ...mapActions({
