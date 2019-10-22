@@ -3,6 +3,7 @@ import { getToken } from '@/api/qiniu'
 
 // 上传文件到七牛云
 export const uploadFile = file => {
+  console.log(file)
   return new Promise(async (resolve, reject) => {
     const observer = {
       next (res) {
@@ -15,9 +16,9 @@ export const uploadFile = file => {
         resolve(res)
       }
     }
-    const { uploadToken } = await getToken() // 获取上传token
+    const { data } = await getToken() // 获取上传token
     const { name } = file
-    const observable = qiniu.upload(file, name, uploadToken)
+    const observable = qiniu.upload(file, name, data)
     observable.subscribe(observer) // 上传开始
   })
 }

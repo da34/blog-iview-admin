@@ -213,6 +213,7 @@ export default {
     // 上传图片
     async handleUpload (file) {
       const { url } = await uploadFile(file)
+      console.log(url)
       this.postForm.imageUrl = url
       return false
     },
