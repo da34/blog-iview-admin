@@ -128,7 +128,7 @@ export default {
     async search () {
       if (!this.keyName) {
         this.$Message.warning('搜索条件不能为空')
-        return;
+        return
       }
       const query = Object.assign({}, this.query, { username: this.keyName })
       const { data } = await getUserList(query)

@@ -1,0 +1,5 @@
+apps:
+  - script: ./admin.js
+    name: blog-admin
+    env-production:
+      NODE_ENV: production
