@@ -4,7 +4,7 @@ import store from '@/store'
 import { getToken } from './cookie'
 
 const isProd = process.env.NODE_ENV === 'production'
-const baseURL = isProd ? '/api' : 'http://127.0.0.1:7001/api/v1'
+const baseURL = isProd ? '/api' : '/api/'
 const instance = axios.create({
   baseURL,
   timeout: 5000,
