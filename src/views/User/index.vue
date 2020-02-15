@@ -20,7 +20,7 @@
                     </ISwitch>
                 </template>
                 <template slot-scope="{ row }" slot="comments">
-                    <sapn>{{ row.comments.length }}</sapn>
+                    <span>{{ row.comments.length }}</span>
                 </template>
                 <template slot-scope="{ row }" slot="action">
                     <Button type="info" size="small" @click="edit(row)" disabled>编辑</Button>

@@ -54,4 +54,5 @@ export default {
             padding 0 10px
             &:hover
                 background #F5F7F9
+
 </style>

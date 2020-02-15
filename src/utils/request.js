@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { Message } from 'view-design'
 import store from '@/store'
-import { getToken } from './cookie'
+import { getToken, getDiy } from './cookie'
 
 const isProd = process.env.NODE_ENV === 'production'
-const baseURL = isProd ? '/api' : '/api/'
+const baseURL = isProd ? '' : '/api'
 const instance = axios.create({
   baseURL,
   timeout: 5000,
@@ -15,10 +15,13 @@ const instance = axios.create({
 instance.interceptors.request.use(
   config => {
     // 请求之前判断有无token
-    // const token = getToken() || store.getters.token
-    // if (token) {
-    // config.headers['Authorization'] = `Bearer ${token}`
-    // }
+    const token = getToken() || store.getters.token
+    let csrfToken = getDiy('csrfToken')
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+    // 带上csrfToken
+    config.headers['x-csrf-token'] = csrfToken
     return config
   }, error => {
     return Promise.reject(error)
